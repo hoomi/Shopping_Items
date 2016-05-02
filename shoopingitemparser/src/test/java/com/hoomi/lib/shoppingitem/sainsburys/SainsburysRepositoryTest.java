@@ -1,4 +1,4 @@
-package com.hoomi.lib.shoppingitem.domain;
+package com.hoomi.lib.shoppingitem.sainsburys;
 
 import com.hoomi.lib.shoppingitem.CallbackReceiver;
 import com.hoomi.lib.shoppingitem.network.NetworkService;

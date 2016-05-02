@@ -94,6 +94,21 @@ public class NetworkServiceTest {
     public void test_actual_call_to_sainsburys_server() throws Exception {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         networkService = new NetworkService();
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                countDownLatch.countDown();
+                return null;
+            }
+        }).when(mockedCallback).onSuccess(anyList());
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                countDownLatch.countDown();
+                return null;
+            }
+        }).when(mockedCallback).onError();
+
         networkService.getProducts(mockedCallback);
         countDownLatch.await();
 

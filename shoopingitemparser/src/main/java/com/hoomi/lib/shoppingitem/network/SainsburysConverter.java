@@ -1,14 +1,12 @@
 package com.hoomi.lib.shoppingitem.network;
 
 import com.hoomi.lib.shoppingitem.domain.model.Product;
-import com.hoomi.lib.shoppingitem.domain.model.ProductImp;
+import com.hoomi.lib.shoppingitem.sainsburys.model.SainsburysProductImp;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
-import org.jsoup.select.NodeVisitor;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -35,6 +33,7 @@ public class SainsburysConverter extends Converter.Factory {
         public List<Product> convert(ResponseBody value) throws IOException {
             List<Product> products = null;
             Document document = Jsoup.parse(value.byteStream(), "UTF-8", "");
+            //Look for this section first as it seems to be unique within the document
             Element productLister = document.getElementById("productLister");
             Elements productListerInner = productLister.getElementsByClass("productlister");
             Elements productInfo = productListerInner.get(0).getElementsByClass("productInfo");
@@ -45,7 +44,7 @@ public class SainsburysConverter extends Converter.Factory {
                     Element a = element.getElementsByTag("h3").get(0).getElementsByTag("a").get(0);
                     String title = a.text();
                     String imageRef = a.getElementsByTag("img").get(0).attr("src");
-                    products.add(new ProductImp(title,imageRef,""));
+                    products.add(new SainsburysProductImp(title,imageRef,""));
                 }
             }
 

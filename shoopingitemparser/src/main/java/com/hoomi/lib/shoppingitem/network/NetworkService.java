@@ -27,7 +27,6 @@ public class NetworkService {
 
     private final String host;
     private final ProductService productService;
-    private Retrofit retrofit;
 
     public NetworkService() {
         this("http://www.sainsburys.co.uk/");
@@ -35,6 +34,40 @@ public class NetworkService {
 
     NetworkService(String host) {
         this.host = host;
+        // The converter should be injected so we can reuse this module for other websites
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(host)
+                .addConverterFactory(new SainsburysConverter())
+                .client(generateDummyClient())
+                .build();
+        this.productService = retrofit.create(ProductService.class);
+    }
+
+
+    public void getProducts(final CallbackReceiver callbackReceiver) {
+        this.productService.getListOfProducts().enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                if (response.isSuccessful()) {
+                    callbackReceiver.onSuccess(response.body());
+                } else {
+                    callbackReceiver.onError();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                callbackReceiver.onError();
+            }
+        });
+    }
+
+    /**
+     * It generate a dummy response for the html page as the live html page is generated dynamically with javascript
+     * @return
+     */
+    private OkHttpClient generateDummyClient() {
         OkHttpClient client = new OkHttpClient.Builder().addNetworkInterceptor(new Interceptor() {
             @Override
             public okhttp3.Response intercept(Chain chain) throws IOException {
@@ -63,33 +96,7 @@ public class NetworkService {
                         .build();
             }
         }).build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(host)
-                // I cannot use this factory as the page populates the list from javascript which needs me to be able to run the javascript code
-                .addConverterFactory(new SainsburysConverter())
-                .client(client)
-                .build();
-        this.productService = retrofit.create(ProductService.class);
-    }
-
-
-    public void getProducts(final CallbackReceiver callbackReceiver) {
-        this.productService.getListOfProducts().enqueue(new Callback<List<Product>>() {
-            @Override
-            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
-                if (response.isSuccessful()) {
-                    callbackReceiver.onSuccess(response.body());
-                } else {
-                    callbackReceiver.onError();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<List<Product>> call, Throwable t) {
-                callbackReceiver.onError();
-            }
-        });
+        return client;
     }
 
 
