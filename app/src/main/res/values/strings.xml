@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">ShoppingItems</string>
+    <string name="no_items_found">No items were found</string>
+    <string name="number_of_items">"Total Items: "</string>
+    <string name="error_string">There was an error</string>
 </resources>

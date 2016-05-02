@@ -31,8 +31,10 @@ public class MainActivity extends AppCompatActivity implements MView<List<Produc
     ListView itemslistView;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
-
+    @BindView(R.id.errorMessage)
+    TextView errorTextView;
     private MPresenter presenter;
+    private ShoppingItemsAdapter shoppingItemsAdapter;
 
 
     @Override
@@ -47,29 +49,44 @@ public class MainActivity extends AppCompatActivity implements MView<List<Produc
     @Override
     public void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
+        errorTextView.setVisibility(View.GONE);
         itemslistView.setVisibility(View.GONE);
     }
 
     @Override
     public void hideProgress() {
         progressBar.setVisibility(View.GONE);
+        errorTextView.setVisibility(View.GONE);
         itemslistView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showResults(List<Product> products) {
-        itemslistView.setAdapter(new ShoppingItemsAdapter(this, products));
+        if (shoppingItemsAdapter == null) {
+            shoppingItemsAdapter = new ShoppingItemsAdapter(this, products);
+            itemslistView.setAdapter(shoppingItemsAdapter);
+        } else {
+            shoppingItemsAdapter.setItems(products);
+        }
+        if (products != null && products.size() > 0) {
+            setTitle(getString(R.string.number_of_items) + products.size());
+        } else {
+            setTitle(getString(R.string.no_items_found));
+            errorTextView.setText(R.string.no_items_found);
+        }
     }
 
     @Override
     public void showError() {
         progressBar.setVisibility(View.GONE);
         itemslistView.setVisibility(View.GONE);
+        errorTextView.setVisibility(View.VISIBLE);
+        errorTextView.setText(R.string.error_string);
     }
 
     static class ShoppingItemsAdapter extends BaseAdapter {
         private final LayoutInflater layoutInflater;
-        private final List<Product> products;
+        private List<Product> products;
         private final Picasso picasso;
 
         public ShoppingItemsAdapter(Context context, List<Product> products) {
@@ -109,6 +126,11 @@ public class MainActivity extends AppCompatActivity implements MView<List<Produc
             picasso.load(product.getImageRef()).fit().centerCrop().into(vh.shoppingItemImageView);
 
             return convertView;
+        }
+
+        public void setItems(List<Product> items) {
+            this.products = items;
+            notifyDataSetChanged();
         }
 
         static class ViewHolder {
