@@ -33,7 +33,6 @@ public class ShoppingItemServiceTest {
     public void setUp() throws Exception {
         testProducts = new ArrayList<>();
         MockitoAnnotations.initMocks(this);
-        when(mockedProductRepository.getShoppingItems(mockedCallBackReceiver)).thenReturn(testProducts);
 
     }
 
@@ -52,17 +51,17 @@ public class ShoppingItemServiceTest {
     @Test
     public void test_singleton_multi_thread() throws Exception {
         int numberOfThreads = 10;
-        CountDownLatch countDownLatch = new CountDownLatch(numberOfThreads);
-        ShoppingItemService[] shoppingItemServices = new ShoppingItemService[numberOfThreads];
+        final CountDownLatch countDownLatch = new CountDownLatch(numberOfThreads);
+        final ShoppingItemService[] shoppingItemServices = new ShoppingItemService[numberOfThreads];
         for (int i = 0; i < numberOfThreads; i++) {
             final int finalI = i;
-            new Thread(() -> {
-                try {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
                     shoppingItemServices[finalI] = ShoppingItemService.getInstance();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    countDownLatch.countDown();
+
                 }
-                countDownLatch.countDown();
             }).start();
         }
         countDownLatch.await(10, TimeUnit.SECONDS);

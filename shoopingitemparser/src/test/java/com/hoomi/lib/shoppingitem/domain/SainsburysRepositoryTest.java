@@ -1,17 +1,14 @@
 package com.hoomi.lib.shoppingitem.domain;
 
 import com.hoomi.lib.shoppingitem.CallbackReceiver;
-import com.hoomi.lib.shoppingitem.domain.model.Product;
 import com.hoomi.lib.shoppingitem.network.NetworkService;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import java.util.List;
-
-import static org.junit.Assert.*;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by hoomanostovari on 02/05/2016.
@@ -27,7 +24,8 @@ public class SainsburysRepositoryTest {
 
     @Before
     public void setUp() throws Exception {
-        sainsburysRepository = new SainsburysRepository();
+        MockitoAnnotations.initMocks(this);
+        sainsburysRepository = new SainsburysRepository(mockedNetworkService);
 
     }
 
@@ -36,6 +34,8 @@ public class SainsburysRepositoryTest {
 
 
         sainsburysRepository.getShoppingItems(mockedCallbackReceiver);
+
+        verify(mockedNetworkService).getProducts(mockedCallbackReceiver);
 
 
     }

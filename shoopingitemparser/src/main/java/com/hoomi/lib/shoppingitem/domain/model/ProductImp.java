@@ -17,12 +17,12 @@ public class ProductImp implements Product {
 
     @Override
     public String getImageRef() {
-        return null;
+        return this.imageRef;
     }
 
     @Override
     public String getTitle() {
-        return null;
+        return this.title;
     }
 
     @Override

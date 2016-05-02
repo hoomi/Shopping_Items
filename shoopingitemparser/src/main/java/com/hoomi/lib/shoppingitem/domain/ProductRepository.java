@@ -9,5 +9,5 @@ import java.util.List;
  * Created by hoomanostovari on 01/05/2016.
  */
 public interface ProductRepository {
-    List<Product> getShoppingItems(CallbackReceiver callBackReceiver);
+    void getShoppingItems(CallbackReceiver callBackReceiver);
 }

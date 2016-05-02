@@ -6,7 +6,7 @@ import com.hoomi.lib.shoppingitem.domain.model.Product;
 
 import java.util.List;
 
-public final class ShoppingItemService {
+public class ShoppingItemService {
 
     private static ShoppingItemService instance;
     private ProductRepository productRepository;
@@ -19,7 +19,7 @@ public final class ShoppingItemService {
         this.productRepository = productRepository;
     }
 
-    public static ShoppingItemService getInstance() throws InterruptedException {
+    public static ShoppingItemService getInstance() {
         if (instance == null) {
             synchronized (ShoppingItemService.class) {
                 if (instance == null) {
@@ -31,7 +31,7 @@ public final class ShoppingItemService {
     }
 
 
-    public List<Product> getItems(CallbackReceiver callbackReceiver) {
-        return productRepository.getShoppingItems(callbackReceiver);
+    public void getItems(CallbackReceiver callbackReceiver) {
+        productRepository.getShoppingItems(callbackReceiver);
     }
 }
