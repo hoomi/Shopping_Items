@@ -5,6 +5,7 @@ import com.hoomi.lib.shoppingitem.domain.model.Product;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -24,14 +25,15 @@ public class ShoppingItemServiceTest {
 
     @Mock
     private ProductRepository mockedProductRepository;
-    private List<Product> testProducts;
+    @Mock
     private CallbackReceiver mockedCallBackReceiver;
+    private List<Product> testProducts;
 
     @Before
     public void setUp() throws Exception {
         testProducts = new ArrayList<>();
         MockitoAnnotations.initMocks(this);
-        when(mockedProductRepository.getShoppingItems(callBackReceiver)).thenReturn(testProducts);
+        when(mockedProductRepository.getShoppingItems(mockedCallBackReceiver)).thenReturn(testProducts);
 
     }
 
@@ -71,8 +73,9 @@ public class ShoppingItemServiceTest {
 
     @Test
     public void test_get_list_of_items() throws Exception {
+        ShoppingItemService shoppingItemService = new ShoppingItemService(mockedProductRepository);
 
-        ShoppingItemService.getInstance().getItems(mockedCallBackReceiver);
+        shoppingItemService.getItems(mockedCallBackReceiver);
 
         verify(mockedProductRepository).getShoppingItems(mockedCallBackReceiver);
     }
